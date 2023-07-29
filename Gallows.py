@@ -2,6 +2,8 @@
 #повтор
 #файл
 #рисунок виселицы
+
+#проверки на цифры, на две буквы, l
 from random import choice; import re
 
 
@@ -51,15 +53,6 @@ people=(
   "|  ( )\n"
   "|  \|/\n"
   "|   |\n"
-  "|  / \n"
-  "|   \n"
-"=========\n"
-"=========\n"
-  "+---+\n"
-  "|   |\n"
-  "|  ( )\n"
-  "|  \|/\n"
-  "|   |\n"
   "|  / \\\n"
   "|   \n"
 "=========\n",
@@ -72,38 +65,69 @@ def start_hungman () -> str:
     start = input().title()
     
     return start
+  
+  
 def open_words()->list:
   'Считывает зараняя подготовленные слова'
-  
+    
   with open('book.txt', 'r', encoding='utf-8') as f:
-        words = f.readlines()
-        
-  return words
+       return f.readlines()
+    
+
+         
 def draw_hugman(index: int):
   'выводи виселицу поэтапно'
   
-  print(people[index])
+  print('-------------------------\n', people[index])
+  
+  
+def check_used(char:str, used:list) ->list:
+    while True:
+      if char in used:
+        char = input("Вы ввели некоректную букву или вы уже вводили её. Введите другую: ")
+        continue
+      if len(char)!=1:
+        char = input("Вы ввели некоректную букву или вы уже вводили её. Введите другую: ")
+        continue
+      if ord(char)<1072 or ord(char)>1103:
+        char = input("Вы ввели некоректную букву или вы уже вводили её. Введите другую: ")
+        continue
+      else:
+        used.append(char)
+        return used, char
+
+
 def play(source_word: str, word: str):
-  print(source_word)
-  mistake=0
-  while mistake < 7 or source_word==word:
-    char=input("Введите предполагаему букву:")
+  mistake = 0
+  used = list()
+  while mistake < 6 and source_word!=word:
+    print('-------------------------\n', source_word, '\n-------------------------')
+    print(f'Вы использовали данные буквы: {used}')
+    char=input("Введите предполагаему букву: ").lower()
+    used, char=check_used(char, used)
     if char in word:
+      
       new_word = ''
-      for i in range(len(word)):
+      for i in range(len(word)):     
         if word[i] == char:
           new_word += word[i]
+          
         else:
           new_word += source_word[i]
+          
       source_word = new_word
+      
     else:
       draw_hugman(mistake)
       mistake += 1
-    print(source_word)
-
+      
+  if source_word==word:
+    print(f"\nПоздравляю! Вы отгадали слово {word}")
+  else:
+    print(f"\nК сожалению, вы проиграли, но не отчаивайтесь!\nПопробуйте снова!\nБыло загадано слово: {word}")  
 
 if start_hungman() == 'Да':
-    words=open_words()
+    words = open_words()
     word = choice(words).replace('\n', '')
     source_word = (len(word)) * '*'
     play(source_word, word)
