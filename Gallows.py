@@ -60,7 +60,7 @@ people=(
 def start_hungman () -> str:
     'Приветствует пользователя при первом запуске'
     
-    print('\033[1m' + " Добро пожаловать в Hungman!\n" + '\033[0m', "Хотите сыграть в игру?\n\n",
+    print('\n\033[1m' + " Добро пожаловать в Hungman!\n" + '\033[0m', "Хотите сыграть в игру?\n\n",
       "Правила достаточно просты: я загадываю слово, а ваша цель отгадать его по 1 букве.\nУ вас есть право на 6 ошибок.\n")
     start = input().title()
     
@@ -82,6 +82,7 @@ def draw_hugman(index: int):
   
   
 def check_used(char:str, used:list) ->list:
+    'проверка на корректные символы'
     while True:
       if char in used:
         char = input("Вы ввели некоректную букву или вы уже вводили её. Введите другую: ")
@@ -98,6 +99,7 @@ def check_used(char:str, used:list) ->list:
 
 
 def play(source_word: str, word: str):
+  'основная логика игры'
   mistake = 0
   used = list()
   while mistake < 6 and source_word!=word:
@@ -126,8 +128,12 @@ def play(source_word: str, word: str):
   else:
     print(f"\nК сожалению, вы проиграли, но не отчаивайтесь!\nПопробуйте снова!\nБыло загадано слово: {word}")  
 
-if start_hungman() == 'Да':
+while True:
+  if start_hungman() == 'Да':
     words = open_words()
     word = choice(words).replace('\n', '')
     source_word = (len(word)) * '*'
     play(source_word, word)
+  else:
+    print("Приходи ещё раз =)")
+    break
